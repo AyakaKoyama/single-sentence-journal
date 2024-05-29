@@ -4,6 +4,7 @@ import {
   ErrorMessage,
   FormControl,
   Input,
+  VStack,
 } from "@yamada-ui/react";
 import { useEffect, useState } from "react";
 import { addSentence, getSentence } from "./utils/supabaseFunctions";
@@ -62,32 +63,51 @@ function App() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box
           w="full"
-          p="md"
-          bg={{
-            base: "#fcf8f1",
-          }}
+          p={4}
+          bg="white"
           color="#3f3f3f"
+          borderRadius="md"
+          boxShadow="sm"
+          mb={4}
         >
-          <FormControl isInvalid label="ひとこと">
+          <FormControl isInvalid label="ひとこと" mb={4}>
             <Input placeholder="" size="lg" />
             <ErrorMessage color="gray.300">入力してね</ErrorMessage>
           </FormControl>
 
           <Button
             type="submit"
-            bg={{
-              base: "#e5b76f",
-            }}
+            bg="#e5b76f"
             color="white"
+            ml="auto"
+            display="block"
+            _hover={{ bg: "#d49b5c" }}
           >
             つぶやく
           </Button>
         </Box>
       </form>
       {/* Render test data */}
-      {diary.map((diary) => (
-        <div key={diary.id}>{diary.sentence}</div>
-      ))}
+      <Box p={4} rounded="md" bg="#f7e9d2" color="black" mb={4}>
+        これまでのつぶやき
+      </Box>
+
+      <VStack p={4} align="stretch">
+        {diary.map((diary) => (
+          <Box
+            key={diary.id}
+            p={4}
+            rounded="md"
+            bg="white"
+            color="#3f3f3f"
+            boxShadow="sm"
+            borderWidth="2px"
+            borderColor="#f7e9d2"
+          >
+            {diary.sentence}
+          </Box>
+        ))}
+      </VStack>
     </>
   );
 }
