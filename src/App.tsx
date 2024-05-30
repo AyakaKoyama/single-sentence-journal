@@ -1,10 +1,10 @@
 import {
   Box,
   Button,
-  ErrorMessage,
   FormControl,
   Input,
   VStack,
+  Text,
 } from "@yamada-ui/react";
 import { useEffect, useState } from "react";
 import { addSentence, getSentence } from "./utils/supabaseFunctions";
@@ -17,7 +17,7 @@ export type Inputs = {
 
 function App() {
   const [diary, setDiary] = useState<Diary[]>([]);
-  const { handleSubmit } = useForm<Inputs>();
+  const { register, handleSubmit } = useForm<Inputs>();
 
   //表示
   useEffect(() => {
@@ -29,7 +29,11 @@ function App() {
           return;
         }
         console.log(sentenceData);
-        setDiary(sentenceData.map((data) => new Diary(data.id, data.sentence)));
+        setDiary(
+          sentenceData.map(
+            (data) => new Diary(data.id, data.sentence, data.created_at)
+          )
+        );
       } catch (error) {
         console.error("Failed to fetch data:", error);
       }
@@ -50,6 +54,7 @@ function App() {
         {
           id: addSentenceData.id,
           sentence: addSentenceData.sentence,
+          date: addSentenceData.date,
         },
       ]);
       console.log(addSentenceData);
@@ -71,8 +76,11 @@ function App() {
           mb={4}
         >
           <FormControl isInvalid label="ひとこと" mb={4}>
-            <Input placeholder="" size="lg" />
-            <ErrorMessage color="gray.300">入力してね</ErrorMessage>
+            <Input
+              placeholder=""
+              size="lg"
+              {...register("sentence", { required: "入力してね" })}
+            />
           </FormControl>
 
           <Button
@@ -104,7 +112,10 @@ function App() {
             borderWidth="2px"
             borderColor="#f7e9d2"
           >
-            {diary.sentence}
+            <Text mb={2}>{diary.sentence}</Text>
+            <Text fontSize="sm" color="gray.500" textAlign="right">
+              {new Date(diary.date).toLocaleString()}
+            </Text>
           </Box>
         ))}
       </VStack>
