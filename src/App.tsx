@@ -5,6 +5,7 @@ import {
   Input,
   VStack,
   Text,
+  useColorMode,
 } from "@yamada-ui/react";
 import { useEffect, useState } from "react";
 import { addSentence, getSentence } from "./utils/supabaseFunctions";
@@ -63,18 +64,22 @@ function App() {
     }
   };
 
+  const { colorMode, toggleColorMode } = useColorMode();
+
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box
           w="full"
           p={4}
-          bg="white"
           color="#3f3f3f"
           borderRadius="md"
           boxShadow="sm"
           mb={4}
         >
+          <Button onClick={toggleColorMode} mb={2}>
+            {colorMode === "light" ? "ダーク" : "ライト"}モードに切り替える
+          </Button>
           <FormControl isInvalid label="ひとこと" mb={4}>
             <Input
               placeholder=""
