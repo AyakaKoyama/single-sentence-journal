@@ -6,8 +6,9 @@ import {
   VStack,
   Text,
   useColorMode,
+  Motion,
 } from "@yamada-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { addSentence, getSentence } from "./utils/supabaseFunctions";
 import { Diary } from "./domain/Diary";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -19,6 +20,7 @@ export type Inputs = {
 function App() {
   const [diary, setDiary] = useState<Diary[]>([]);
   const { register, handleSubmit } = useForm<Inputs>();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   //表示
   useEffect(() => {
@@ -77,7 +79,7 @@ function App() {
           boxShadow="sm"
           mb={4}
         >
-          <Button onClick={toggleColorMode} mb={2}>
+          <Button onClick={toggleColorMode} mb={2} bg="#f7e9d2" color="black">
             {colorMode === "light" ? "ダーク" : "ライト"}モードに切り替える
           </Button>
           <FormControl isInvalid label="ひとこと" mb={4}>
@@ -87,17 +89,28 @@ function App() {
               {...register("sentence", { required: "入力してね" })}
             />
           </FormControl>
-
-          <Button
+          <Motion
+            as="button"
             type="submit"
-            bg="#e5b76f"
-            color="white"
             ml="auto"
             display="block"
-            _hover={{ bg: "#d49b5c" }}
+            whileTap={{ scale: 1.1 }}
+            onTap={(ev, { point }) =>
+              console.log("Tap ends", "x:", point.x, "y:", point.y)
+            }
+            onTapStart={(ev, { point }) =>
+              console.log("Tap starts", "x:", point.x, "y:", point.y)
+            }
+            onTapCancel={(ev, { point }) =>
+              console.log("Tap cancels", "x:", point.x, "y:", point.y)
+            }
+            p="md"
+            rounded="md"
+            bg="#ddaf7e"
+            color="white"
           >
             つぶやく
-          </Button>
+          </Motion>
         </Box>
       </form>
       {/* Render test data */}
@@ -117,10 +130,22 @@ function App() {
             borderWidth="2px"
             borderColor="#f7e9d2"
           >
-            <Text mb={2}>{diary.sentence}</Text>
-            <Text fontSize="sm" color="gray.500" textAlign="right">
-              {new Date(diary.date).toLocaleString()}
-            </Text>
+            <Motion
+              initial={{ x: -100 }}
+              whileInView={{ x: 0 }}
+              viewport={{ root: containerRef }}
+              transition={{ duration: 1 }}
+              onViewportEnter={(entry) => console.log("Scroll entires", entry)}
+              onViewportLeave={(entry) => console.log("Scroll leaves", entry)}
+              p="md"
+              rounded="md"
+              bg="white"
+            >
+              <Text mb={2}>{diary.sentence}</Text>
+              <Text fontSize="sm" color="gray.500" textAlign="right">
+                {new Date(diary.date).toLocaleString()}
+              </Text>
+            </Motion>
           </Box>
         ))}
       </VStack>
